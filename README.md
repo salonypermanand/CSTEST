@@ -1,1 +1,1 @@
-# CSTEST
+# CredProject
