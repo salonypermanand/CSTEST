@@ -34,6 +34,17 @@ def productDetail():
     req = Request('https://www.chewy.com/pedigree-adult-complete-nutrition/dp/141438', headers={'User-Agent': 'Mozilla/5.0'})
     webpage = urlopen(req).read()
     soup1 = BeautifulSoup(webpage, 'html.parser')
-    for el in soup1.find("div", {"class": "cw-tabs__body container"}).findAll('p'):
+    temp = (webpage.decode('UTF-8'))
+    #data = json.loads(temp)
+
+    for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).findAll('ul'):
+        print("Key Benfilte Are" +el.get_text())
+    for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).findAll('p'):
+        print("Description is" +el.get_text())
+    for el in soup1.findall("article", {"class": "cw-tabs__content"}).findAll('p'):
         print(el.get_text())
+        for element in el.find("section", {"class": "cw-tabs__content--left"}).findAll('p'):
+            print("Ingredients Are" +element.get_text())
+
+productDetail()
 
