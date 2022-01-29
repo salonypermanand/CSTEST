@@ -34,17 +34,31 @@ def productDetail():
     req = Request('https://www.chewy.com/pedigree-adult-complete-nutrition/dp/141438', headers={'User-Agent': 'Mozilla/5.0'})
     webpage = urlopen(req).read()
     soup1 = BeautifulSoup(webpage, 'html.parser')
+    soup2 = BeautifulSoup(webpage, 'lxml')
     temp = (webpage.decode('UTF-8'))
-    #data = json.loads(temp)
+    all_scripts = soup2.find_all("script", {"src":False})
+    all_scripts=(all_scripts[18].text)
+    pattern = re.compile(r'var\s+itemData\s+= {(.*?)};',  re.DOTALL)
+    soup = BeautifulSoup(webpage, "html.parser")
 
+    script = soup.find("script", text=pattern)
+    if script:
+        match = pattern.search(all_scripts)
+        if match:
+            email = match.group(1)
+            print(type(email))
+            data = json.dumps(email)
+            data1=json.loads(data)
+            print(type(data1))
+    for el in soup1.find("div", {"id": "product-title"}).findAll('h1'):
+        print("Product Name is" + el.get_text())
+    for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).find('p'):
+        print("Description is" + el.get_text())
     for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).findAll('ul'):
         print("Key Benfilte Are" +el.get_text())
-    for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).findAll('p'):
-        print("Description is" +el.get_text())
-    for el in soup1.findall("article", {"class": "cw-tabs__content"}).findAll('p'):
-        print(el.get_text())
-        for element in el.find("section", {"class": "cw-tabs__content--left"}).findAll('p'):
-            print("Ingredients Are" +element.get_text())
-
-productDetail()
+    for element in soup1.find("article", {"id": "Nutritional-Info"}).findAll('section',class_='cw-tabs__content--left'):
+        print("Ingredients: ", element.find("p").text)
+    for element in soup1.find("div", {"class": "pdp-align"}).findAll('div',class_='pdp-ext-content'):
+        brand=str(element.find("h2").text).split()[1]
+        print("Brand Name: ", brand)
 
