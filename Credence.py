@@ -34,22 +34,15 @@ def productDetail():
     req = Request('https://www.chewy.com/pedigree-adult-complete-nutrition/dp/141438', headers={'User-Agent': 'Mozilla/5.0'})
     webpage = urlopen(req).read()
     soup1 = BeautifulSoup(webpage, 'html.parser')
-    soup2 = BeautifulSoup(webpage, 'lxml')
-    temp = (webpage.decode('UTF-8'))
-    all_scripts = soup2.find_all("script", {"src":False})
-    all_scripts=(all_scripts[18].text)
-    pattern = re.compile(r'var\s+itemData\s+= {(.*?)};',  re.DOTALL)
-    soup = BeautifulSoup(webpage, "html.parser")
-
-    script = soup.find("script", text=pattern)
-    if script:
-        match = pattern.search(all_scripts)
-        if match:
-            email = match.group(1)
-            print(type(email))
-            data = json.dumps(email)
-            data1=json.loads(data)
-            print(type(data1))
+    all_scripts = soup1.find_all("script", {"src":False})
+    all_scripts=(all_scripts[18].text.strip()[118:-1])
+    reqdData=(str(all_scripts).replace("'",'"').replace('canonicalURL','"canonicalURL"').replace('ajaxURL','"ajaxURL"').replace('sku','"sku"').replace('images','"images"').replace('price','"price"').replace(",\n                     ]", "]"))
+    data = json.loads(reqdData)
+    print("Images from Json Are:")
+    print(data['381335']['images'],data['141436']['images'],data['141437']['images'],data['141438']['images'])
+    print("Product Price from Json Are:")
+    print(data['381335']['price'], data['141436']['price'], data['141437']['price'], data['141438']['price'])
+    print("Size Is:" + soup1.find('title').text[-21:-16])
     for el in soup1.find("div", {"id": "product-title"}).findAll('h1'):
         print("Product Name is" + el.get_text())
     for el in soup1.find("section", {"class": "descriptions__content cw-tabs__content--left"}).find('p'):
